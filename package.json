@@ -1,0 +1,31 @@
+{
+  "name": "neon-arcade-arena",
+  "version": "1.0.0",
+  "description": "Real-time online multiplayer arcade: Ludo, Chess, Slingshot physics duel, Tic-Tac-Toe & Connect 4",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "smoke": "node scripts/smoke.js"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "keywords": [
+    "multiplayer",
+    "socket.io",
+    "ludo",
+    "chess",
+    "physics",
+    "arcade"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "matter-js": "^0.19.0",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.7.5"
+  }
+}

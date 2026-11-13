@@ -1,0 +1,15 @@
+# Render Blueprint — 1-click deploy of Neon Arcade Arena
+# Deploy button URL: https://render.com/deploy?repo=https://github.com/<you>/<repo>
+services:
+  - type: web
+    name: neon-arcade-arena
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 20.11.1
+      - key: NODE_ENV
+        value: production

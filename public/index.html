@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neon Arcade Arena — Online Multiplayer Games</title>
+  <meta name="description" content="Play Ludo, Chess, Slingshot physics duels, Tic-Tac-Toe and Connect 4 online with friends in real time." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body class="min-h-screen">
+
+  <!-- ================= TOP BAR ================= -->
+  <header id="topbar" class="topbar hidden">
+    <div class="flex items-center gap-3">
+      <span class="logo-mark">NA</span>
+      <span class="logo-text">NEON<span class="text-neon-pink">ARCADE</span></span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button id="btn-music" class="ctl-btn" title="Toggle background music">♫ OFF</button>
+      <button id="btn-sound" class="ctl-btn" title="Toggle sound effects">🔊 SFX</button>
+      <button id="profile-chip" class="profile-chip" title="Change profile">
+        <span id="chip-avatar">👾</span>
+        <span id="chip-name">GUEST</span>
+        <span class="chip-edit">✎</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= PROFILE MODAL ================= -->
+  <div id="modal-profile" class="modal-overlay">
+    <div class="modal-card neon-border">
+      <h1 class="modal-title">ENTER THE ARENA</h1>
+      <p class="modal-sub">Pick your gamer tag &amp; avatar</p>
+      <div class="field">
+        <label class="field-label" for="profile-name">GAMER NAME</label>
+        <input id="profile-name" class="text-input" maxlength="16" placeholder="e.g. PIXEL_REAPER" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label class="field-label">AVATAR</label>
+        <div id="avatar-grid" class="avatar-grid"></div>
+      </div>
+      <p id="profile-error" class="error-text"></p>
+      <button id="profile-enter" class="btn btn-primary btn-lg">▶ START PLAYING</button>
+    </div>
+  </div>
+
+  <!-- ================= GAME SETUP MODAL (create room) ================= -->
+  <div id="modal-setup" class="modal-overlay hidden">
+    <div class="modal-card neon-border">
+      <h2 class="modal-title-sm" id="setup-game-name">GAME</h2>
+      <div class="field">
+        <label class="field-label">ROOM TYPE</label>
+        <div class="segment">
+          <button id="setup-private" class="seg-btn active" data-v="private">🔒 Private</button>
+          <button id="setup-public" class="seg-btn" data-v="public">🌐 Public</button>
+        </div>
+      </div>
+      <div class="field hidden" id="setup-max-field">
+        <label class="field-label">PLAYERS (LUDO)</label>
+        <select id="setup-max" class="text-input">
+          <option value="2">2 players</option>
+          <option value="3">3 players</option>
+          <option value="4">4 players</option>
+        </select>
+      </div>
+      <p id="setup-error" class="error-text"></p>
+      <div class="flex gap-3">
+        <button id="setup-cancel" class="btn btn-ghost">Cancel</button>
+        <button id="setup-create" class="btn btn-primary">⚡ CREATE ROOM</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PROMOTION MODAL (chess) ================= -->
+  <div id="modal-promo" class="modal-overlay hidden">
+    <div class="modal-card neon-border text-center">
+      <h2 class="modal-title-sm">PROMOTE PAWN</h2>
+      <div id="promo-choices" class="promo-row"></div>
+    </div>
+  </div>
+
+  <!-- ================= LOBBY VIEW ================= -->
+  <main id="view-lobby" class="view hidden">
+    <section class="hero">
+      <h1 class="hero-title">NEON ARCADE <span>ARENA</span></h1>
+      <p class="hero-sub">Real-time online multiplayer · rooms · matchmaking · live chat</p>
+    </section>
+
+    <div class="lobby-grid">
+      <!-- left: games + join -->
+      <div class="lobby-main">
+        <section>
+          <h2 class="section-title">// GAME LIBRARY</h2>
+          <div id="game-grid" class="game-grid"></div>
+        </section>
+
+        <section class="join-panel neon-border">
+          <h2 class="section-title">// JOIN WITH CODE</h2>
+          <form id="join-form" class="join-form">
+            <input id="join-code" class="code-input" maxlength="6" placeholder="ABC123" autocomplete="off" />
+            <button type="submit" class="btn btn-primary">➜ JOIN ROOM</button>
+          </form>
+          <p class="hint-text">Or share a link like <b>https://your-host/#ABC123</b></p>
+        </section>
+
+        <section>
+          <h2 class="section-title">// PUBLIC ROOMS</h2>
+          <div id="public-rooms" class="panel-box"></div>
+        </section>
+      </div>
+
+      <!-- right: chat, leaderboard, stats -->
+      <div class="lobby-side">
+        <section class="panel-box neon-border">
+          <h2 class="section-title">// GLOBAL CHAT</h2>
+          <div id="global-chat-messages" class="chat-messages"></div>
+          <form id="global-chat-form" class="chat-form">
+            <input id="global-chat-input" class="chat-input" maxlength="300" placeholder="Say hi to the lobby…" autocomplete="off" />
+            <button type="submit" class="btn btn-ghost btn-send">SEND</button>
+          </form>
+        </section>
+
+        <section class="panel-box neon-border">
+          <h2 class="section-title">// LEADERBOARD</h2>
+          <div id="leaderboard"></div>
+        </section>
+
+        <section class="panel-box neon-border">
+          <h2 class="section-title">// YOUR STATS &amp; BADGES</h2>
+          <div id="my-stats"></div>
+          <div id="my-badges" class="badge-row"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- ================= ROOM (waiting) VIEW ================= -->
+  <main id="view-room" class="view hidden">
+    <section class="room-panel neon-border">
+      <div class="room-head">
+        <div>
+          <h2 class="section-title" id="room-game-name">ROOM</h2>
+          <div class="room-code-row">
+            <span class="room-code" id="room-code">------</span>
+            <button id="btn-copy" class="btn btn-ghost btn-sm">⧉ COPY LINK</button>
+          </div>
+          <p class="hint-text" id="room-hint">Share this code with friends, then hit READY.</p>
+        </div>
+        <button id="btn-leave-room" class="btn btn-danger">✕ LEAVE</button>
+      </div>
+      <div id="room-players" class="room-players"></div>
+      <div class="room-actions">
+        <button id="btn-ready" class="btn btn-primary">READY UP</button>
+        <button id="btn-start" class="btn btn-accent hidden">▶ START MATCH (HOST)</button>
+      </div>
+    </section>
+    <section class="panel-box neon-border room-chat-panel">
+      <h2 class="section-title">// ROOM CHAT</h2>
+      <div id="room-chat-messages" class="chat-messages"></div>
+      <form id="room-chat-form" class="chat-form">
+        <input id="room-chat-input" class="chat-input" maxlength="300" placeholder="Trash talk politely…" autocomplete="off" />
+        <button type="submit" class="btn btn-ghost btn-send">SEND</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- ================= GAME VIEW ================= -->
+  <main id="view-game" class="view hidden">
+    <section class="game-shell">
+      <div class="game-main">
+        <div class="game-topbar">
+          <div class="game-topbar-left">
+            <span id="game-title" class="game-title">GAME</span>
+            <span id="game-code" class="game-code">ROOM ------</span>
+          </div>
+          <div class="game-topbar-right">
+            <span id="game-turn" class="turn-indicator"></span>
+            <span id="game-timer" class="timer hidden"></span>
+            <button id="btn-resign" class="btn btn-danger btn-sm hidden">🏳 RESIGN</button>
+            <button id="btn-leave-game" class="btn btn-ghost btn-sm">✕ EXIT</button>
+          </div>
+        </div>
+        <div id="game-container" class="game-container"></div>
+        <div id="game-over" class="game-over hidden">
+          <h2 id="over-title" class="over-title">VICTORY</h2>
+          <p id="over-reason" class="over-reason"></p>
+          <div class="flex gap-3 justify-center mt-4">
+            <button id="btn-rematch" class="btn btn-accent">⟳ REMATCH</button>
+            <button id="btn-over-leave" class="btn btn-ghost">LOBBY</button>
+          </div>
+        </div>
+      </div>
+      <aside class="game-side">
+        <section class="panel-box neon-border">
+          <h2 class="section-title">// MATCH CHAT</h2>
+          <div id="game-chat-messages" class="chat-messages chat-messages-tall"></div>
+          <form id="game-chat-form" class="chat-form">
+            <input id="game-chat-input" class="chat-input" maxlength="300" placeholder="Type during the match…" autocomplete="off" />
+            <button type="submit" class="btn btn-ghost btn-send">SEND</button>
+          </form>
+        </section>
+        <section id="game-extra" class="panel-box neon-border hidden"></section>
+      </aside>
+    </section>
+  </main>
+
+  <!-- ================= TOASTS ================= -->
+  <div id="toasts" class="toasts"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/vendor/matter.min.js"></script>
+  <script src="/client.js"></script>
+  <script src="/games/ludo.js"></script>
+  <script src="/games/chess.js"></script>
+  <script src="/games/slingshot.js"></script>
+  <script src="/games/arcade.js"></script>
+</body>
+</html>

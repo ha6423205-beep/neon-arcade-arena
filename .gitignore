@@ -1,0 +1,11 @@
+node_modules/
+tools/
+.env
+.env.*
+scripts/
+data/
+*.log
+logs/
+.DS_Store
+Thumbs.db
+.qoder/
